@@ -1,0 +1,39 @@
+package vTiger.Practice;
+
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+
+import org.apache.poi.EncryptedDocumentException;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
+
+public class ExcelSheetPractice {
+	public static void main(String[] args) throws EncryptedDocumentException, IOException {
+		//step1: load file  location into file input stream
+		FileInputStream fis= new FileInputStream(".\\src\\test\\resources\\TestData.xlsx");
+		
+		//step2: create a workbook
+		Workbook wb=WorkbookFactory.create(fis);
+		
+		//step3: navigate to required sheet
+		Sheet sh=wb.getSheet("Organizations");
+		
+		//step4: navigate to required row
+		Row rw=sh.getRow(7);
+		
+		//step5: navigate to required cell
+		Cell cel=rw.getCell(4);
+		
+		//step6: capture the data present in the cell
+		String value = cel.getStringCellValue();
+		System.out.println(value);
+		
+		String value1 = rw.getCell(2).getStringCellValue();
+		System.out.println(value1);
+	}
+
+}
