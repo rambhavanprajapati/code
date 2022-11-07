@@ -1,0 +1,24 @@
+package vTiger.Practice;
+
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.Properties;
+
+public class PropertyFilePractice {
+	public static void main(String[] args) throws IOException {
+		//step1: load the file location into file input stream
+		FileInputStream fis= new FileInputStream(".\\src\\test\\resources\\CommonData.properties");
+		
+		//step2: create objet of properties from java.util package
+		Properties pobj=new Properties();
+		
+		//step3: load file input stream into properties
+		pobj.load(fis);
+		
+		//step4: read the value using key.
+		String value=pobj.getProperty("browser");
+		System.out.println(value);
+	}
+
+}
