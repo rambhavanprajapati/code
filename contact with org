@@ -1,0 +1,114 @@
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.time.Duration;
+import java.util.Properties;
+import java.util.Random;
+import java.util.Set;
+
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.firefox.FirefoxDriver;
+
+import io.github.bonigarcia.wdm.WebDriverManager;
+
+public class CreateContactWithOrganization {
+	public static void main(String[] args) throws IOException, InterruptedException {
+		//step1: read the necessary data
+				/*Property file*/
+				
+				FileInputStream fis=new FileInputStream(".\\src\\test\\resources\\CommonData.properties");
+				Properties pobj=new Properties();
+				pobj.load(fis);
+				String BROWSER=pobj.getProperty("browser");
+				String URL=pobj.getProperty("url");
+				String USERNAME=pobj.getProperty("username");
+				String PASSWORD=pobj.getProperty("password");
+				
+				/*Excel file - Test Data*/
+				FileInputStream fis1=new FileInputStream(".\\src\\test\\resources\\TestData.xlsx");
+				Workbook wb=WorkbookFactory.create(fis1);
+				Sheet sh=wb.getSheet("Contacts");
+				Row rw=sh.getRow(4);
+				Cell ce=rw.getCell(2);
+				String LASTNAME=ce.getStringCellValue();
+				Random r= new Random();
+				int num= r.nextInt(10000);
+				String ORGNAME=sh.getRow(4).getCell(3).getStringCellValue();
+				ORGNAME=ORGNAME+num;
+				
+				WebDriver driver=null;
+				
+				//step2: Launch Browser - run time polymorphism - driver 
+				if(BROWSER.equalsIgnoreCase("chrome"))
+				{
+					WebDriverManager.chromedriver().setup();
+					driver=new ChromeDriver();
+				}
+				else if(BROWSER.equalsIgnoreCase("firefox"))
+				{
+					WebDriverManager.firefoxdriver().setup();
+					driver=new FirefoxDriver();
+				}
+				else
+				{
+					System.out.println("invalid browser name");
+				}
+				driver.manage().window().maximize();
+				driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(20));
+				driver.get(URL);
+				
+				//step3: Login to the application
+				driver.findElement(By.name("user_name")).sendKeys(USERNAME);
+				driver.findElement(By.name("user_password")).sendKeys(PASSWORD);
+				driver.findElement(By.id("submitButton")).click();
+				
+				//Step 4: Click on Organizations Link
+				driver.findElement(By.linkText("Organizations")).click();
+						
+				//Step 5: click on create organization lookup image
+				driver.findElement(By.xpath("//img[@alt='Create Organization...']")).click();
+				
+				//Step 6: Create new organization with mandatory information and save
+				driver.findElement(By.name("accountname")).sendKeys(ORGNAME);
+				driver.findElement(By.xpath("//input[@title='Save [Alt+S]']")).click();
+				
+				Thread.sleep(2000);
+				//step 7: Click on Contacts
+				driver.findElement(By.linkText("Contacts")).click();
+				
+				//step 8: click on create contact lookup image
+				driver.findElement(By.xpath("//img[@title='Create Contact...']")).click();
+				
+				//step 9:create new contact with mandatory information and save
+				driver.findElement(By.name("lastname")).sendKeys(LASTNAME);
+				driver.findElement(By.xpath("//tbody/tr[5]/td[2]/img")).click();
+				
+				String mainid=driver.getWindowHandle();
+				Set<String> allid=driver.getWindowHandles();
+				for(String id:allid)
+				{
+					if(!(mainid.equals(id)))
+					{
+						driver.switchTo().window(id);
+					}
+				}
+				driver.findElement(By.id("search_txt")).sendKeys(ORGNAME);
+				
+				driver.findElement(By.name("search")).click();
+				Thread.sleep(2000);
+				driver.findElement(By.xpath("//table[contains(@style,'background-color')]/descendant::tr[2]/td/a")).click();
+				
+				driver.switchTo().window(mainid);
+				driver.findElement(By.xpath("//input[@title='Save [Alt+S]']")).click();
+				
+				
+	}
+
+}
