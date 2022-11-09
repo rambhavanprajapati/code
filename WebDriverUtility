@@ -1,0 +1,45 @@
+import java.time.Duration;
+
+import org.openqa.selenium.WebDriver;
+
+/**
+ * This class contains generic methods to perform all web driver related actions 
+ * @author Zero Touch
+ *
+ */
+
+public class WebDriverUtility {
+	
+	/**
+	 * This method will maximize the window when its called
+	 * @param driver
+	 */
+	
+	public void maximiseWindow(WebDriver driver)
+	{
+		driver.manage().window().maximize();
+	}
+	
+	/**
+	 * This method will minimise the window
+	 * @param driver
+	 */
+	public void minimizeWindow(WebDriver driver)
+	{
+		driver.manage().window().minimize();
+	}
+	
+	/**
+	 * This method will wait for entire page to load for 20 seconds
+	 * @param driver
+	 */
+	
+	public void waitForPageLoad(WebDriver driver)
+	{
+		driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(20));
+	}
+	
+	
+	
+
+}
