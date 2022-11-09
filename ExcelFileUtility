@@ -1,0 +1,81 @@
+
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+
+import org.apache.poi.EncryptedDocumentException;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
+
+public class ExcelFileUtility {
+	
+	/**
+	 * this method will take the value from excel sheet for respective sheet name
+	 * row number and cell number
+	 * @param sheetName
+	 * @param rowNum
+	 * @param cellNum
+	 * @return
+	 * @throws EncryptedDocumentException
+	 * @throws IOException
+	 */
+	public String readDataFromExcelsheet(String sheetName, int rowNum, int cellNum) throws EncryptedDocumentException, IOException
+	{
+		FileInputStream fis= new FileInputStream(IConstantsUtility.ExcelFilePath);
+		Workbook wb = WorkbookFactory.create(fis);
+		Sheet sh=wb.getSheet(sheetName);
+		Row rw = sh.getRow(rowNum);
+		Cell ce = rw.getCell(cellNum);
+		String value = ce.getStringCellValue();
+		wb.close();
+		return value;
+		
+	}
+	/**
+	 * this method will give the total row count in the sheet 
+	 * @param sheetName
+	 * @return
+	 * @throws EncryptedDocumentException
+	 * @throws IOException
+	 */
+	
+	public int getRowCount(String sheetName) throws EncryptedDocumentException, IOException
+	
+	{
+		FileInputStream fis= new FileInputStream(IConstantsUtility.ExcelFilePath);
+		Workbook wb = WorkbookFactory.create(fis);
+		Sheet sh=wb.getSheet(sheetName);
+		int rowCount = sh.getLastRowNum();
+		wb.close();
+		return rowCount;
+	}
+	/**
+	 * this method will write data into excel sheet
+	 * @param sheetName
+	 * @param rowNum
+	 * @param cellNum
+	 * @param data
+	 * @throws EncryptedDocumentException
+	 * @throws IOException
+	 */
+	public void writeDataIntoExcel(String sheetName, int rowNum,int cellNum, String data) throws EncryptedDocumentException, IOException
+	{
+		FileInputStream fis = new FileInputStream(IConstantsUtility.ExcelFilePath);
+		Workbook wb= WorkbookFactory.create(fis);
+		Sheet sh = wb.getSheet(sheetName);
+		Row rw = sh.getRow(rowNum);
+		Cell ce = rw.createCell(cellNum);
+		
+		ce.setCellValue(data);
+		
+		FileOutputStream fos = new FileOutputStream(IConstantsUtility.ExcelFilePath);
+		wb.write(fos);
+		
+		wb.close();
+		
+	}
+
+}
